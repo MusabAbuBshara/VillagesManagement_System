@@ -1,0 +1,564 @@
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  line-height: 1.6;
+}
+
+*:focus {
+  outline: none;
+}
+
+body {
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+  background-color: #1a202c;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+button, input[type=submit] {
+  cursor: pointer;
+  border: none;
+  transition: 0.3s;
+}
+
+.gray-text {
+  color: #9ba2ae;
+  font-size: 14px;
+}
+
+.rad-6 {
+  border-radius: 6px;
+}
+
+.blue-link {
+  display: block;
+  text-align: center;
+  background-color: #3c82f6;
+  color: white;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+#login, #sign-up {
+  width: 350px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  padding: 20px;
+  background-color: #1f2937;
+}
+#login > a.back, #sign-up > a.back {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 5px;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+#login > a.back i, #sign-up > a.back i {
+  font-size: 20px;
+}
+#login > a.back:hover, #sign-up > a.back:hover {
+  background-color: #5b647a;
+}
+#login h3, #sign-up h3 {
+  margin: 10px 0;
+  text-align: center;
+}
+#login form, #sign-up form {
+  margin: 15px 0;
+}
+#login form *, #sign-up form * {
+  width: 100%;
+}
+#login form > div, #sign-up form > div {
+  margin-bottom: 15px;
+}
+#login form > div input:focus, #sign-up form > div input:focus {
+  border: 3px solid #3c82f6;
+}
+#login form label, #sign-up form label {
+  display: block;
+  margin-bottom: 5px;
+}
+#login form input, #sign-up form input {
+  padding: 7px;
+}
+#login form input[type=submit], #sign-up form input[type=submit] {
+  background-color: #3c82f6;
+  color: white;
+}
+#login > div, #sign-up > div {
+  text-align: center;
+}
+#login > div a, #sign-up > div a {
+  color: #3c82f6;
+}
+@media (max-width: 767px) {
+  #login, #sign-up {
+    width: 100%;
+    max-width: 350px;
+  }
+}
+
+aside {
+  color: white;
+  padding: 20px 0;
+  width: 230px;
+  position: fixed;
+  height: 100vh;
+  background-color: #1f2937;
+  margin-bottom: 5px;
+}
+@media (max-width: 991px) {
+  aside {
+    width: 60px;
+  }
+}
+aside > i {
+  font-size: 30px;
+  margin-bottom: 20px;
+  padding: 0 !important;
+  text-align: center;
+  display: none !important;
+}
+@media (max-width: 991px) {
+  aside > i {
+    display: block !important;
+  }
+}
+aside > *:not(ul) {
+  padding: 0 20px;
+}
+aside h2 {
+  margin-bottom: 20px;
+}
+@media (max-width: 991px) {
+  aside h2 {
+    display: none;
+  }
+}
+aside a {
+  border-radius: 6px;
+  display: block;
+  transition: 0.3s;
+  margin-bottom: 10px;
+  padding: 10px 0 10px 25px;
+  color: white;
+  width: 100%;
+}
+aside a.active, aside a:hover {
+  background-color: #2d3748;
+}
+@media (max-width: 991px) {
+  aside a {
+    padding: 10px;
+    text-align: center;
+  }
+}
+@media (max-width: 991px) {
+  aside a span {
+    display: none;
+  }
+}
+aside a i {
+  font-size: 20px;
+  display: none !important;
+}
+@media (max-width: 991px) {
+  aside a i {
+    display: block !important;
+  }
+}
+aside #logout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  bottom: 15px;
+}
+@media (max-width: 1199px) {
+  aside #logout {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    justify-content: center;
+  }
+}
+aside #logout img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+@media (max-width: 1199px) {
+  aside #logout img {
+    margin: 0;
+  }
+}
+aside #logout span {
+  font-size: 14px;
+}
+aside #logout button {
+  background-color: transparent;
+  color: red;
+  margin-left: 15px;
+}
+@media (max-width: 1199px) {
+  aside #logout button {
+    margin: 0;
+  }
+}
+
+#content {
+  width: calc(100% - 230px);
+  position: absolute;
+  right: 0;
+  padding: 20px;
+}
+@media (max-width: 991px) {
+  #content {
+    width: calc(100% - 60px);
+  }
+}
+#content h1 {
+  color: white;
+  margin-bottom: 20px;
+}
+#content #page-content {
+  color: white;
+}
+
+#map {
+  width: 100%;
+  min-height: 450px;
+  background-color: #1f2937;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+}
+
+#stats {
+  color: white;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(calc(25% - 15px), 1fr));
+}
+@media (max-width: 1199px) {
+  #stats {
+    grid-template-columns: repeat(auto-fill, minmax(calc(50% - 15px), 1fr));
+  }
+}
+@media (max-width: 767px) {
+  #stats {
+    grid-template-columns: 1fr;
+  }
+}
+#stats > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 15px;
+  background-color: #1f2937;
+}
+
+.graphs-title {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.graphs {
+  display: flex;
+  width: 100%;
+  gap: 15px;
+  margin-top: 15px;
+}
+@media (max-width: 1199px) {
+  .graphs {
+    flex-direction: column;
+  }
+}
+.graphs > div {
+  background-color: #1f2937;
+  width: 50%;
+  padding: 20px;
+  text-align: center;
+}
+@media (max-width: 1199px) {
+  .graphs > div {
+    width: 100%;
+  }
+}
+.graphs > div h3 {
+  margin-bottom: 10px;
+}
+.graphs > div #gragh-colors {
+  margin-top: 15px;
+}
+.graphs > div #gragh-colors, .graphs > div #gragh-colors > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.graphs > div #gragh-colors #box {
+  width: 50px;
+  height: 15px;
+  border: 1px solid white;
+  margin-right: 5px;
+}
+.graphs > div #gragh-colors #box.red {
+  background-color: #a74c65;
+}
+.graphs > div #gragh-colors #box.blue {
+  background-color: #2f72a3;
+}
+.graphs > div #gragh-colors #box.yellow {
+  background-color: #a58c4d;
+}
+.graphs > div #gragh-colors #box.green {
+  background-color: #3c8489;
+}
+.graphs > div #gragh-colors #box.purple {
+  background-color: #684eaf;
+}
+
+#gragh-colors canvas {
+  max-width: 400px;
+  margin: 20px auto;
+  display: block;
+}
+
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.modal-village {
+  position: absolute;
+  width: 570px;
+  z-index: 3;
+  background-color: #1a202c;
+  color: white;
+  padding: 20px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.modal-header button {
+  height: -moz-fit-content;
+  height: fit-content;
+  width: 21.6px;
+  border-radius: 50%;
+  background-color: transparent;
+  color: #9ba2ae;
+}
+
+#overlay {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+#adding-village,
+#updating-village,
+#updating-demographic,
+#adding-image {
+  display: none;
+}
+#adding-village form input,
+#updating-village form input,
+#updating-demographic form input,
+#adding-image form input {
+  display: block;
+  width: 100%;
+  background-color: #374151;
+  padding: 5px;
+  font-size: 16px;
+  color: white;
+  margin: 5px 0;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+}
+#adding-village form input::-moz-placeholder, #updating-village form input::-moz-placeholder, #updating-demographic form input::-moz-placeholder, #adding-image form input::-moz-placeholder {
+  color: #9ba2ae;
+}
+#adding-village form input::placeholder,
+#updating-village form input::placeholder,
+#updating-demographic form input::placeholder,
+#adding-image form input::placeholder {
+  color: #9ba2ae;
+}
+#adding-village form input[type=submit],
+#updating-village form input[type=submit],
+#updating-demographic form input[type=submit],
+#adding-image form input[type=submit] {
+  background-color: #4a5568;
+  margin-top: 15px;
+}
+#adding-village form input[type=submit]:hover,
+#updating-village form input[type=submit]:hover,
+#updating-demographic form input[type=submit]:hover,
+#adding-image form input[type=submit]:hover {
+  background-color: #5b647a;
+}
+
+#viewing-village {
+  display: none;
+}
+#viewing-village .modal-header {
+  margin-bottom: 20px;
+}
+#viewing-village > div {
+  margin-bottom: 5px;
+}
+#viewing-village > div:last-child {
+  margin-top: 15px;
+}
+#viewing-village > div .info {
+  font-weight: bold;
+}
+#viewing-village > div img {
+  display: block;
+  width: 300px;
+  height: 150px;
+}
+
+#add-village,
+#add-image {
+  background-color: #4a5568;
+  color: white;
+  padding: 5px 15px;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+#add-village:hover,
+#add-image:hover {
+  background-color: #5b647a;
+}
+
+.management {
+  padding: 20px;
+  background-color: #1f2937;
+}
+.management #search-village {
+  width: 100%;
+  background-color: #374151;
+  padding: 5px;
+  font-size: 16px;
+  color: white;
+  margin: 10px 0;
+  border: 1px solid #4a5568;
+}
+.management #search-village::-moz-placeholder {
+  color: #9ba2ae;
+}
+.management #search-village::placeholder {
+  color: #9ba2ae;
+}
+.management #villages-config {
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+@media (max-width: 490px) {
+  .management #villages-config {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+.management #villages-config #sort-by {
+  background-color: #2d3748;
+  color: white;
+  padding: 5px;
+  margin-left: 10px;
+  border: 1px solid #4a5568;
+}
+.management #villages-config, .management #villages-config #navigate-pages {
+  display: flex;
+  align-items: center;
+}
+.management #villages-config #navigate-pages button {
+  background-color: #4a5568;
+  padding: 5px 10px;
+  margin-left: 5px;
+  color: white;
+}
+.management #villages-config #navigate-pages button:hover {
+  background-color: #5b647a;
+}
+.management #villages-list > div {
+  background-color: #2d3748;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 10px;
+}
+@media (max-width: 991px) {
+  .management #villages-list > div {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (max-width: 767px) {
+  .management #villages-list > div .village-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+.management #villages-list > div button {
+  background-color: #4a5568;
+  padding: 5px 10px;
+  margin-left: 5px;
+  color: white;
+}
+.management #villages-list > div button:hover {
+  background-color: #5b647a;
+}
+
+.image-content {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  justify-content: center;
+}
+.image-content .image-box {
+  padding: 15px;
+  border-radius: 6px;
+  background-color: #1f2937;
+}
+.image-content .image-box img {
+  width: 100%;
+  height: 150px;
+  border-radius: 6px;
+}
