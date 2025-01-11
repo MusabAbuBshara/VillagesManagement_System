@@ -1,0 +1,680 @@
+// Import Colors
+@use './layout/colors' as *;
+// @use './layout/grid' as *;
+@use './layout/screens' as *;
+
+
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  line-height: 1.6;
+}
+
+*:focus {
+  outline: none;
+}
+
+body {
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+  background-color: $main-color;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input[type="submit"] {
+  cursor: pointer;
+  border: none;
+  transition: 0.3s;
+}
+
+.gray-text {
+  color: $gray-color;
+  font-size: 14px;
+}
+
+.rad-6 {
+  border-radius: 6px;
+}
+
+.blue-link {
+  display: block;
+  text-align: center;
+  background-color: $submit-color;
+  color: white;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+#login,
+#sign-up {
+  width: 350px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  padding: 20px;
+  background-color: $alt-color;
+
+  > a.back {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    padding: 5px;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+
+    i {
+      font-size: 20px;
+    }
+
+    &:hover {
+      background-color: $button-alt-color;
+    }
+  }
+
+  h3 {
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  form {
+    margin: 15px 0;
+
+    * {
+      width: 100%;
+    }
+
+    > div {
+      margin-bottom: 15px;
+
+      input:focus {
+        border: 3px solid $submit-color;
+      }
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 7px;
+
+      &[type="submit"] {
+        background-color: $submit-color;
+        color: white;
+      }
+    }
+  }
+
+  > div {
+    text-align: center;
+
+    a {
+      color: $submit-color;
+    }
+  }
+
+  @include breakpoints(mobile) {
+    width: 100%;
+    max-width: 350px;
+  }
+}
+
+aside {
+  color: white;
+  padding: 20px 0;
+  width: 230px;
+  position: fixed;
+  height: 100vh;
+  background-color: $alt-color;
+  margin-bottom: 5px;
+
+  @include breakpoints(small) {
+    width: 60px;
+  }
+
+  > i {
+    font-size: 30px;
+    margin-bottom: 20px;
+    padding: 0 !important;
+    text-align: center;
+    display: none !important;
+
+    @include breakpoints(small) {
+      display: block !important;
+    }
+  }
+
+  > *:not(ul) {
+    padding: 0 20px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+
+    @include breakpoints(small) {
+      display: none;
+    }
+  }
+
+  a {
+    border-radius: 6px;
+    display: block;
+    transition: 0.3s;
+    margin-bottom: 10px;
+    padding: 10px 0 10px 25px;
+    color: white;
+    width: 100%;
+
+    &.active,
+    &:hover {
+      background-color: $third-color;
+    }
+
+    @include breakpoints(small) {
+      padding: 10px;
+      text-align: center;
+
+      span {
+        display: none;
+      }
+
+      i {
+        display: block !important;
+      }
+    }
+  }
+
+  #logout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 15px;
+
+    @include breakpoints(medium) {
+      flex-direction: column;
+      width: 100%;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 7px;
+
+      @include breakpoints(medium) {
+        margin: 0;
+      }
+    }
+
+    span {
+      font-size: 14px;
+    }
+
+    button {
+      background-color: transparent;
+      color: red;
+      margin-left: 15px;
+
+      @include breakpoints(medium) {
+        margin: 0;
+      }
+    }
+  }
+}
+
+#content {
+  width: calc(100% - 230px);
+  position: absolute;
+  right: 0;
+  padding: 20px;
+
+  @include breakpoints(small) {
+    width: calc(100% - 60px);
+  }
+
+  h1 {
+    color: white;
+    margin-bottom: 20px;
+  }
+
+  #page-content {
+    color: white;
+  }
+}
+
+#map {
+  width: 100%;
+  min-height: 450px;
+  background-color: $alt-color;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+}
+
+#stats {
+  color: white;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(calc(25% - 15px), 1fr));
+
+  @include breakpoints(medium) {
+    grid-template-columns: repeat(auto-fill, minmax(calc(50% - 15px), 1fr));
+  }
+
+  @include breakpoints(mobile) {
+    grid-template-columns: 1fr;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px;
+    background-color: $alt-color;
+  }
+}
+
+.graphs-title {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.graphs {
+  display: flex;
+  width: 100%;
+  gap: 15px;
+  margin-top: 15px;
+
+  @include breakpoints(medium) {
+    flex-direction: column;
+  }
+
+  > div {
+    background-color: $alt-color;
+    width: 50%;
+    padding: 20px;
+    text-align: center;
+
+    @include breakpoints(medium) {
+      width: 100%;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    #gragh-colors {
+      margin-top: 15px;
+
+      &,
+      > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      #box {
+        width: 50px;
+        height: 15px;
+        border: 1px solid white;
+        margin-right: 5px;
+
+        &.red {
+          background-color: $red-color;
+        }
+
+        &.blue {
+          background-color: $blue-color;
+        }
+
+        &.yellow {
+          background-color: $yellow-color;
+        }
+
+        &.green {
+          background-color: $green-color;
+        }
+
+        &.purple {
+          background-color: $purple-color;
+        }
+      }
+    }
+  }
+}
+
+#gragh-colors canvas {
+  max-width: 400px;
+  margin: 20px auto;
+  display: block;
+}
+
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.modal-village {
+  position: absolute;
+  width: 570px;
+  z-index: 3;
+  background-color: $main-color;
+  color: white;
+  padding: 20px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  button {
+    height: fit-content;
+    width: 21.6px;
+    border-radius: 50%;
+    background-color: transparent;
+    color: $gray-color;
+  }
+}
+
+#overlay {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+#adding-image {
+  display: none;
+}
+
+#adding-village form input,
+#updating-village form input,
+#updating-demographic form input,
+#adding-image form input {
+  display: block;
+  width: 100%;
+  background-color: $third-color;
+  padding: 5px;
+  font-size: 16px;
+  color: white;
+  margin: 5px 0;
+  border: 1px solid $button-color;
+  border-radius: 6px;
+
+  &::placeholder {
+    color: $gray-color;
+  }
+
+  &[type="submit"] {
+    background-color: $button-color;
+    margin-top: 15px;
+
+    &:hover {
+      background-color: $button-alt-color;
+    }
+  }
+}
+
+#viewing-village {
+  .modal-header {
+    margin-bottom: 20px;
+  }
+
+  > div {
+    margin-bottom: 5px;
+
+    &:last-child {
+      margin-top: 15px;
+    }
+
+    .info {
+      font-weight: bold;
+    }
+
+    img {
+      display: block;
+      width: 300px;
+      height: 150px;
+    }
+  }
+}
+
+#add-village,
+#add-image {
+  background-color: $button-color;
+  color: white;
+  padding: 5px 15px;
+  font-size: 16px;
+  margin-bottom: 15px;
+
+  &:hover {
+    background-color: $button-alt-color;
+  }
+}
+
+.management {
+  padding: 20px;
+  background-color: $alt-color;
+
+  #search-village {
+    width: 100%;
+    background-color: $third-color;
+    padding: 5px;
+    font-size: 16px;
+    color: white;
+    margin: 10px 0;
+    border: 1px solid $button-color;
+
+    &::placeholder {
+      color: $gray-color;
+    }
+  }
+
+  #villages-config {
+    justify-content: space-between;
+    margin-top: 5px;
+    margin-bottom: 15px;
+
+    @include breakpoints(mobile) {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    #sort-by {
+      background-color: $third-color;
+      color: white;
+      padding: 5px;
+      margin-left: 10px;
+      border: 1px solid $button-color;
+    }
+
+    &,
+    #navigate-pages {
+      display: flex;
+      align-items: center;
+    }
+
+    #navigate-pages button {
+      background-color: $button-color;
+      padding: 5px 10px;
+      margin-left: 5px;
+      color: white;
+
+      &:hover {
+        background-color: $button-alt-color;
+      }
+    }
+  }
+
+  #villages-list > div {
+    background-color: $third-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 10px;
+
+    @include breakpoints(small) {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    @include breakpoints(mobile) {
+      .village-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    button {
+      background-color: $button-color;
+      padding: 5px 10px;
+      margin-left: 5px;
+      color: white;
+
+      &:hover {
+        background-color: $button-alt-color;
+      }
+    }
+  }
+}
+
+#search-admin,
+#search-user {
+  width: 100%;
+  background-color: white;
+  padding: 10px;
+  font-size: 16px;
+  margin: 10px 0;
+  border: 1px solid $button-color;
+
+  &::placeholder {
+    color: $gray-color;
+  }
+}
+
+#search-results,
+#chat-content {
+  padding: 20px;
+  background-color: $alt-color;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+
+#search-results #admins-list,
+#search-results #users-list {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  > div {
+    text-align: center;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+}
+
+#chat-content #conversation {
+  border: 1px $gray-color solid;
+  height: 150px;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-y: scroll;
+
+  .admin span:nth-of-type(1) {
+    color: $gray-color;
+  }
+
+  .admin span:nth-of-type(2) {
+    color: $blue-color;
+  }
+
+  .user span:nth-of-type(1) {
+    color: $gray-color;
+  }
+
+  .user span:nth-of-type(2) {
+    color: $green-color;
+  }
+}
+
+#chat-content #sending {
+  margin-top: 10px;
+
+  textarea {
+    padding: 10px;
+    width: 100%;
+    height: 100px;
+    border-radius: 6px;
+
+    &::placeholder {
+      color: $gray-color;
+    }
+  }
+
+  button {
+    margin-top: 10px;
+    display: block;
+    background-color: $submit-color;
+    color: white;
+    padding: 7px;
+    border-radius: 6px;
+  }
+}
+
+.image-content {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  justify-content: center;
+
+  .image-box {
+    padding: 15px;
+    border-radius: 6px;
+    background-color: $alt-color;
+
+    img {
+      width: 100%;
+      height: 150px;
+      border-radius: 6px;
+    }
+  }
+}
