@@ -1,50 +1,55 @@
-export default function UserGallery(){
-  // Function to generate image elements
-  function imageElement(image) {
-    return `
-      <div class="image-box">
-        <img src="${image.img}" alt="${image.description}">
-        <p>${image.description}</p>
-      </div>
+import React, { useState, useEffect } from "react";
+
+export default function AdminGallery() {
+  const [images, setImages] = useState([]);
+  const overlay = document.getElementById("overlay");
+
+  // Fetch images from GraphQL API
+  const fetchImages = async () => {
+    const query = `
+      query {
+        getImages {
+          img
+          description
+        }
+      }
     `;
+    const response = await fetch("http://localhost:5000/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+    const data = await response.json();
+    setImages(data.data.getImages);
+  };
+  console.log(images);
+
+  useEffect(() => {
+    fetchImages();
+  }, []);
+
+  // Close all modals
+  function closeAllModals() {
+    const modals = document.querySelectorAll(".modal-village");
+    modals.forEach((modal) => {
+      modal.style.display = "none";
+    });
+    if (overlay) overlay.style.display = "none";
   }
 
-  // Load images from localStorage and render
-  let images = JSON.parse(localStorage.getItem("images")) || [];
-  const imageContent = document.getElementById("page-content");
-
-  function renderImages() {
-    imageContent.innerHTML = images.map(imageElement).join("");
-  }
-  renderImages();
-  return(
-    <div id="content">
-    <div id="page-content" class="image-content">
-      <div class="image-box">
-        <img id="image-box-file" src="../imgs/jabalia.jpg" alt=""/>
-        <p id="image-box-descrption">This Village Is Jabalia</p>
+  return (
+    <>
+      <section id="overlay"></section>
+      <div id="content">
+        <div id="page-content" className="image-content">
+          {images.map((image, index) => (
+            <div className="image-box" key={index}>
+              <img src={image.img} alt="" />
+              <p>{image.description}</p>
+            </div>
+          ))}
+        </div>
       </div>
-      <div class="image-box">
-        <img id="image-box-file" src="../imgs/jabalia.jpg" alt=""/>
-        <p id="image-box-descrption">This Village Is Jabalia</p>
-      </div>
-      <div class="image-box">
-        <img id="image-box-file" src="../imgs/jabalia.jpg" alt=""/>
-        <p id="image-box-descrption">This Village Is Jabalia</p>
-      </div>
-      <div class="image-box">
-        <img id="image-box-file" src="../imgs/jabalia.jpg" alt=""/>
-        <p id="image-box-descrption">This Village Is Jabalia</p>
-      </div>
-      <div class="image-box">
-        <img id="image-box-file" src="../imgs/jabalia.jpg" alt=""/>
-        <p id="image-box-descrption">This Village Is Jabalia</p>
-      </div>
-      <div class="image-box">
-        <img id="image-box-file" src="../imgs/jabalia.jpg" alt=""/>
-        <p id="image-box-descrption">This Village Is Jabalia</p>
-      </div>
-    </div>
-  </div>
-  )
+    </>
+  );
 }

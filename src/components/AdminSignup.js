@@ -10,13 +10,19 @@ export default function AdminSignup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-const query = `
-  mutation {
-    adminSignup(adminName: "${username}", adminFullName: "${fullname}", adminPassword: "${password}") {
-      message
-    }
-  }
-`;
+    const query = `
+      mutation AdminSignup($adminName: String!, $adminFullName: String!, $adminPassword: String!) {
+        adminSignup(adminName: $adminName, adminFullName: $adminFullName, adminPassword: $adminPassword) {
+          message
+        }
+      }
+    `;
+
+    const variables = {
+      adminName: username,
+      adminFullName: fullname,
+      adminPassword: password,
+    };
 
     try {
       const response = await fetch("http://localhost:5000/graphql", {
@@ -24,11 +30,14 @@ const query = `
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, variables }),
       });
 
       const result = await response.json();
-      if (result.data && result.data.addAdmin.message) {
+
+      if (result.errors) {
+        setMessage(`Error: ${result.errors[0].message}`);
+      } else if (result.data && result.data.adminSignup.message) {
         setMessage("The admin has been added successfully!");
       } else {
         setMessage("Error: Unable to add admin.");

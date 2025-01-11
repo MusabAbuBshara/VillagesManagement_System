@@ -11,6 +11,9 @@ import UserDashboard from "./components/UserDashboard";
 import AdminGallery from "./components/AdminGallery"
 import UserGallery from "./components/UserGallery";
 import AdminManagement from "./components/AdminManagement";
+import AdminChat from "./components/AdminChat";
+import UserManagement from "./components/UserManagement";
+import UserChat from "./components/UserChat"
 
 function App() {
   return (
@@ -24,13 +27,13 @@ function App() {
         <Route path="/adminDashboard" element={<AdminDashboard />}>
           <Route path="adminOverview" element={<Overview />}></Route>
           <Route path="adminManagement" element={<AdminManagement />}></Route>
-          <Route path="adminChat" element={<Overview />}></Route>
+          <Route path="adminChat" element={<AdminChat />}></Route>
           <Route path="adminGallery" element={<AdminGallery />}></Route>
         </Route>
         <Route path="/userDashboard" element={<UserDashboard />}>
           <Route path="userOverview" element={<Overview />}></Route>
-          <Route path="userManagement" element={<Overview />}></Route>
-          <Route path="userChat" element={<Overview />}></Route>
+          <Route path="userManagement" element={<UserManagement />}></Route>
+          <Route path="userChat" element={<UserChat />}></Route>
           <Route path="userGallery" element={<UserGallery />}></Route>
         </Route>
       </Routes>

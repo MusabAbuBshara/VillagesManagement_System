@@ -20,6 +20,8 @@ const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const { buildSchema } = require("graphql");
 const cors = require("cors"); // Import CORS
+const WebSocket = require("ws");
+const wss = new WebSocket.Server({ port: 5001 });
 
 // Mock data
 let admins = [
@@ -363,6 +365,7 @@ const schema = buildSchema(`
     adminOverview: OverviewData
     userOverview: OverviewData
     getImages: [Image]
+    getUsers: [User]
   }
 
   type Mutation {
@@ -453,7 +456,8 @@ const root = {
   deleteVillage: ({ villageName }) => {
     villages = villages.filter((v) => v.villageName !== villageName);
     return villages;
-  },  
+  },
+  getUsers: () => users,
 };
 function getOverviewData() {
   const totalVillages = villages.length;
@@ -493,6 +497,48 @@ function getOverviewData() {
   };
 }
 
+wss.on("connection", (ws, req) => {
+  const user = req.url.split("=")[1]; // Extract user name from query string
+  console.log(`User connected: ${user}`);
+
+  ws.user = user; // Store the user name in the WebSocket object
+
+  ws.on("message", (message) => {
+    try {
+      const parsedMessage = JSON.parse(message);
+      console.log("Received message:", parsedMessage);
+
+      // Log all connected clients
+      wss.clients.forEach((client) => {
+        console.log(`Connected client: ${client.user}`);
+      });
+
+      // Broadcast the message to the receiver
+      wss.clients.forEach((client) => {
+        if (
+          client !== ws &&
+          client.readyState === WebSocket.OPEN &&
+          (client.user === parsedMessage.receiver || client.user === parsedMessage.sender)
+        ) {
+          console.log(`Sending message to: ${client.user}`);
+          client.send(JSON.stringify(parsedMessage));
+        }
+      });
+    } catch (error) {
+      console.error("Error handling message:", error);
+    }
+  });
+
+  ws.on("close", () => {
+    console.log(`User disconnected: ${user}`);
+  });
+
+  ws.on("error", (error) => {
+    console.error("WebSocket error:", error);
+  });
+});
+
+console.log("WebSocket server is running on ws://localhost:5001");
 // Initialize Express
 const app = express();
 

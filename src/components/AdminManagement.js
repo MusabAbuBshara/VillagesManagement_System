@@ -1,492 +1,468 @@
-export default function AdminManagement(){
-    const overlay = document.getElementById("overlay");
-    const modals = document.querySelectorAll(".modal-village");
-    const villagesPerPage = 4; // Number of villages per page
-    let currentPage = 1; // Current page index
-    let villageToUpdate;
-  
-    // Close all modals
-    function closeAllModals() {
-      modals.forEach((modal) => {
-        modal.style.display = "none";
-      });
-      overlay.style.display = "none";
-    }
-  
-    // Function to generate village elements
-    function villageElement(village) {
-      return `
-        <div class="rad-6" id="village-element">
-          <div class="name">${village.villageName} - ${village.region}</div>
-          <div class="village-buttons">
-            <button class="view-village rad-6">View</button>
-            <button class="update-village rad-6">Update Village</button>
-            <button class="delete-village rad-6">Delete Village</button>
-            <button class="update-demographic-village rad-6">Update Demographic Data</button>
-          </div>
-        </div>
-      `;
-    }
-  
-    // Load villages from localStorage and render
-    
-    let villages = JSON.parse(localStorage.getItem("villages"));
-    const originalOrder = [...villages]; // Store the original order of villages
-    const villagesList = document.getElementById("villages-list");
-    console.log(villagesList)
-  
-    function renderVillages(villagesToRender, page) {
-      const startIndex = (page - 1) * villagesPerPage;
-      const endIndex = startIndex + villagesPerPage;
-      const paginatedVillages = villagesToRender.slice(startIndex, endIndex);
-      const villagesResult = paginatedVillages.map(villageElement).join("")
-      console.log(villagesResult);
-      
-      villagesList.innerHTML = villagesResult;
-  
-      // Handle "Prev" and "Next" button visibility
-      document.getElementById("prev-page").disabled = page <= 1;
-      document.getElementById("next-page").disabled =
-        endIndex >= villagesToRender.length;
-    }
-  
-    renderVillages(villages, currentPage);
-  
-    // Handle sorting
-    const sortBy = document.getElementById("sort-by");
-    sortBy.addEventListener("change", () => {
-      const sortOption = sortBy.value;
-      if (sortOption === "alphabetical") {
-        villages.sort((a, b) =>
-          a.villageName.localeCompare(b.villageName, undefined, {
-            sensitivity: "base",
-          })
-        );
-      } else if (sortOption === "default") {
-        villages = [...originalOrder]; // Reset to original order
-      }
-      currentPage = 1; // Reset to first page
-      renderVillages(villages, currentPage);
-    });
-  
-    // Handle pagination buttons
-    document.getElementById("prev-page").addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderVillages(villages, currentPage);
-      }
-    });
-  
-    document.getElementById("next-page").addEventListener("click", () => {
-      const totalPages = Math.ceil(villages.length / villagesPerPage);
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderVillages(villages, currentPage);
-      }
-    });
-  
-    // Event delegation for all buttons
-    document.body.addEventListener("click", (event) => {
-      // Close modal buttons
-      if (event.target.closest(".modal-header button")) {
-        closeAllModals();
-      }
-  
-      // Add Village Modal
-      if (event.target.id === "add-village") {
-        document.getElementById("adding-village").style.display = "block";
-        overlay.style.display = "block";
-      }
-  
-      // Handle View Village
-      if (event.target.classList.contains("view-village")) {
-        const villageDiv = event.target.closest("#village-element");
-        const nameElement = villageDiv.querySelector(".name").textContent;
-        const [villageName, region] = nameElement.split(" - ");
-        const village = villages.find(
-          (v) =>
-            v.villageName === villageName.trim() && v.region === region.trim()
-        );
-        if (village) {
-          const viewingVillage = document.getElementById("viewing-village");
-          viewingVillage.querySelector(".village-name .value").textContent =
-            village.villageName;
-          viewingVillage.querySelector(".region .value").textContent =
-            village.region;
-          viewingVillage.querySelector(".land-area .value").textContent =
-            village.landArea;
-          viewingVillage.querySelector(".latitude .value").textContent =
-            village.latitude;
-          viewingVillage.querySelector(".longitude .value").textContent =
-            village.longitude;
-          viewingVillage.querySelector(".tags .value").textContent =
-            village.category;
-          viewingVillage
-            .querySelector(".image .value")
-            .setAttribute("src", village.villageImage);
-  
-          viewingVillage.style.display = "block";
-          overlay.style.display = "block";
-        }
-      }
-  
-      // Handle Update Village
-      if (event.target.classList.contains("update-village")) {
-        document.getElementById("updating-village").style.display = "block";
-        overlay.style.display = "block";
-        villageToUpdate = event.target.closest("#village-element");
-      }
-  
-      // Handle Update Demographic Data
-      if (event.target.classList.contains("update-demographic-village")) {
-        document.getElementById("updating-demographic").style.display = "block";
-        overlay.style.display = "block";
-        villageToUpdate = event.target.closest("#village-element");
-      }
-  
-      // Handle Delete Village
-      if (event.target.classList.contains("delete-village")) {
-        const villageDiv = event.target.closest("#village-element");
-        const nameElement = villageDiv.querySelector(".name").textContent;
-        const [villageName, region] = nameElement.split(" - ");
-  
-        // Update the villages array and localStorage
-        villages = villages.filter(
-          (v) =>
-            !(v.villageName === villageName.trim() && v.region === region.trim())
-        );
-        localStorage.setItem("villages", JSON.stringify(villages));
-        renderVillages(villages, currentPage);
-      }
-    });
-  
-    // Add New Village Handler
-    document.querySelector("#adding-village input[type='submit']").addEventListener("click", (event) => {
-        event.preventDefault();
-        const newVillage = {
-          villageName: document.querySelector("#adding-village #village-name")
-            .value,
-          region: document.querySelector("#adding-village #region").value,
-          landArea: document.querySelector("#adding-village #land-area").value,
-          latitude: document.querySelector("#adding-village #latitude").value,
-          longitude: document.querySelector("#adding-village #longitude").value,
-          category: document.querySelector("#adding-village #categories").value,
-          population: 13117,
-          villageImage: document.querySelector("#adding-village #village-image")
-            .value,
-          ageDistribution: [
-            {
-              upperlimit: 18,
-              value: 45,
-            },
-            {
-              upperlimit: 35,
-              value: 30,
-            },
-            {
-              upperlimit: 50,
-              value: 15,
-            },
-            {
-              upperlimit: 65,
-              value: 7,
-            },
-            {
-              upperlimit: 100,
-              value: 3,
-            },
-          ],
-          genderRatios: {
-            male: 50.5,
-            female: 49.5,
-          },
-          populationGrowthRate: 2.5,
-        };
-  
-        // Add to villages array and update localStorage
-        villages.push(newVillage);
-        originalOrder.push(newVillage); // Add to the original order as well
-        localStorage.setItem("villages", JSON.stringify(villages));
-        renderVillages(villages, currentPage);
-  
-        // Close modals
-        closeAllModals();
-      });
-  
-    document
-      .querySelector("#updating-village input[type='submit']")
-      .addEventListener("click", (event) => {
-        event.preventDefault();
-        const updatedVillage = {
-          villageName: document.querySelector("#updating-village #village-name")
-            .value,
-          region: document.querySelector("#updating-village #region").value,
-          landArea: document.querySelector("#updating-village #land-area").value,
-          latitude: document.querySelector("#updating-village #latitude").value,
-          longitude: document.querySelector("#updating-village #longitude").value,
-        };
-  
-        villages.forEach((villageLocal) => {
-          if (
-            villageLocal.villageName ===
-            villageToUpdate.querySelector(".name").innerHTML.split(" ")[0]
-          ) {
-            villageLocal.villageName = updatedVillage.villageName;
-            villageLocal.region = updatedVillage.region;
-            villageLocal.landArea = updatedVillage.landArea;
-            villageLocal.latitude = updatedVillage.latitude;
-            villageLocal.longitude = updatedVillage.longitude;
-          }
-        });
-        localStorage.setItem("villages", JSON.stringify(villages));
-        renderVillages(villages, currentPage);
-        closeAllModals();
-      });
-  
-      document
-      .querySelector("#updating-demographic input[type='submit']")
-      .addEventListener("click", (event) => {
-        event.preventDefault();
-    
-        // Get updated demographic data from form
-        const updatedPopulation = parseInt(
-          document.querySelector("#updating-demographic #population-size").value,
-          10
-        ) || 13117; // Default value if not provided
-        const updatedGrowthRate = parseFloat(
-          document.querySelector("#updating-demographic #growth-rate").value
-        ) || 2.5; // Default value if not provided
-    
-        const updatedAgeDistribution = [
-          {
-            upperlimit: 18,
-            value: 45,
-          },
-          {
-            upperlimit: 35,
-            value:30,
-          },
-          {
-            upperlimit: 50,
-            value: 15,
-          },
-          {
-            upperlimit: 65,
-            value: 7,
-          },
-          {
-            upperlimit: 100,
-            value: 3,
-          },
-        ];
-        let AgeData = document.querySelector(".age-distribution").split(" ");
-        for (let i=0; i < updatedAgeDistribution.length;i++) {
-          updatedAgeDistribution[i].value = AgeData[i];
-        }
+import React, { useState, useEffect } from 'react';
 
-        let genderData = document.querySelector(".gender-ratios").split(" ");
-        const updatedGenderRatios = {
-          male : genderData[0],
-          female : genderData[1]
-        }
-    
-        // Find and update the target village
-        const villageName = villageToUpdate.querySelector(".name").textContent.split(" - ")[0].trim();
-        villages.forEach((village) => {
-          if (village.villageName === villageName) {
-            village.population = updatedPopulation;
-            village.populationGrowthRate = updatedGrowthRate;
-            village.ageDistribution = updatedAgeDistribution;
-            village.genderRatios = updatedGenderRatios;
-          }
-        });
-    
-        // Save updated villages to localStorage
-        localStorage.setItem("villages", JSON.stringify(villages));
-    
-        // Re-render villages and close the modal
-        renderVillages(villages, currentPage);
-        closeAllModals();
+export default function AdminManagement() {
+  const [villages, setVillages] = useState([]);
+  const [originalOrder, setOriginalOrder] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedVillage, setSelectedVillage] = useState(null);
+  const [showModal, setShowModal] = useState({ adding: false, viewing: false, updating: false, updatingDemographic: false });
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const villagesPerPage = 4;
+
+  useEffect(() => {
+    const storedVillages = JSON.parse(localStorage.getItem("villages")) || [];
+    setVillages(storedVillages);
+    setOriginalOrder(storedVillages);
+  }, []);
+
+  // Filter villages based on the search term
+  const filteredVillages = villages.filter(village =>
+    village.villageName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    village.region.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const makeGraphQLRequest = async (query, variables = {}) => {
+    try {
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query, variables }),
       });
-    
-  
-  return(
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error("Error making GraphQL request: ", error);
+      return null;
+    }
+  };
+
+  const handleAddVillage = async (event) => {
+    event.preventDefault();
+    const newVillage = {
+      villageName: event.target.villageName.value,
+      region: event.target.region.value,
+      landArea: event.target.landArea.value,
+      latitude: event.target.latitude.value,
+      longitude: event.target.longitude.value,
+      category: event.target.categories.value,
+      population: 13117,
+      villageImage: event.target.villageImage.value,
+      ageDistribution: [
+        { upperlimit: 18, value: 45 },
+        { upperlimit: 35, value: 30 },
+        { upperlimit: 50, value: 15 },
+        { upperlimit: 65, value: 7 },
+        { upperlimit: 100, value: 3 },
+      ],
+      genderRatios: { male: 50.5, female: 49.5 },
+      populationGrowthRate: 2.5,
+    };
+
+    const query = `
+      mutation AddVillage($newVillage: String!) {
+        addVillage(newVillage: $newVillage) {
+          villageName
+          region
+          landArea
+          latitude
+          longitude
+          category
+          population
+          villageImage
+          ageDistribution {
+            upperlimit
+            value
+          }
+          genderRatios {
+            male
+            female
+          }
+          populationGrowthRate
+        }
+      }
+    `;
+
+    const variables = {
+      newVillage: JSON.stringify(newVillage),
+    };
+
+    const result = await makeGraphQLRequest(query, variables);
+    if (result && result.addVillage) {
+      const updatedVillages = [...villages, newVillage];
+      setVillages(updatedVillages);
+      localStorage.setItem("villages", JSON.stringify(updatedVillages));
+      setShowModal({ ...showModal, adding: false });
+    }
+  };
+
+  const handleUpdateVillageSubmit = async (event) => {
+    event.preventDefault();
+    const updatedVillage = {
+      villageName: event.target.villageName.value,
+      region: event.target.region.value,
+      landArea: event.target.landArea.value,
+      latitude: event.target.latitude.value,
+      longitude: event.target.longitude.value,
+    };
+
+    const query = `
+      mutation UpdateVillage($updatedVillage: String!) {
+        updateVillage(updatedVillage: $updatedVillage) {
+          villageName
+          region
+          landArea
+          latitude
+          longitude
+          category
+          population
+          villageImage
+          ageDistribution {
+            upperlimit
+            value
+          }
+          genderRatios {
+            male
+            female
+          }
+          populationGrowthRate
+        }
+      }
+    `;
+
+    const variables = {
+      updatedVillage: JSON.stringify(updatedVillage),
+    };
+
+    const result = await makeGraphQLRequest(query, variables);
+    if (result && result.updateVillage) {
+      const updatedVillages = villages.map(v =>
+        v.villageName === selectedVillage.villageName ? { ...v, ...updatedVillage } : v
+      );
+      setVillages(updatedVillages);
+      localStorage.setItem("villages", JSON.stringify(updatedVillages));
+      setShowModal({ ...showModal, updating: false });
+    }
+  };
+
+  const handleDeleteVillage = async (village) => {
+    const query = `
+      mutation DeleteVillage($villageName: String!) {
+        deleteVillage(villageName: $villageName) {
+          villageName
+          region
+          landArea
+          latitude
+          longitude
+          category
+          population
+          villageImage
+          ageDistribution {
+            upperlimit
+            value
+          }
+          genderRatios {
+            male
+            female
+          }
+          populationGrowthRate
+        }
+      }
+    `;
+
+    const variables = {
+      villageName: village.villageName,
+    };
+
+    const result = await makeGraphQLRequest(query, variables);
+    if (result && result.deleteVillage) {
+      const updatedVillages = villages.filter(v => v.villageName !== village.villageName || v.region !== village.region);
+      setVillages(updatedVillages);
+      localStorage.setItem("villages", JSON.stringify(updatedVillages));
+    }
+  };
+
+  const handleUpdateDemographicSubmit = async (event) => {
+    event.preventDefault();
+    const updatedDemographic = {
+      population: parseInt(event.target.populationSize.value, 10) || 13117,
+      populationGrowthRate: parseFloat(event.target.growthRate.value) || 2.5,
+      ageDistribution: event.target.ageDistribution.value.split(" ").map((value, index) => ({
+        upperlimit: [18, 35, 50, 65, 100][index],
+        value: parseInt(value, 10),
+      })),
+      genderRatios: {
+        male: parseFloat(event.target.genderRatios.value.split(" ")[0]),
+        female: parseFloat(event.target.genderRatios.value.split(" ")[1]),
+      },
+    };
+
+    const query = `
+      mutation UpdateVillage($updatedVillage: String!) {
+        updateVillage(updatedVillage: $updatedVillage) {
+          villageName
+          region
+          landArea
+          latitude
+          longitude
+          category
+          population
+          villageImage
+          ageDistribution {
+            upperlimit
+            value
+          }
+          genderRatios {
+            male
+            female
+          }
+          populationGrowthRate
+        }
+      }
+    `;
+
+    const updatedVillage = {
+      ...selectedVillage,
+      ...updatedDemographic,
+    };
+
+    const variables = {
+      updatedVillage: JSON.stringify(updatedVillage),
+    };
+
+    const result = await makeGraphQLRequest(query, variables);
+    if (result && result.updateVillage) {
+      const updatedVillages = villages.map(v =>
+        v.villageName === selectedVillage.villageName ? { ...v, ...updatedDemographic } : v
+      );
+      setVillages(updatedVillages);
+      localStorage.setItem("villages", JSON.stringify(updatedVillages));
+      setShowModal({ ...showModal, updatingDemographic: false });
+    }
+  };
+
+  const closeModals = () => {
+    setShowModal({ adding: false, viewing: false, updating: false, updatingDemographic: false });
+  };
+
+  const renderVillages = (villagesToRender, page) => {
+    const startIndex = (page - 1) * villagesPerPage;
+    const endIndex = startIndex + villagesPerPage;
+    return villagesToRender.slice(startIndex, endIndex).map((village, index) => (
+      <div key={index} className="rad-6 village-element">
+        <div className="name">{village.villageName} - {village.region}</div>
+        <div className="village-buttons">
+          <button className="view-village rad-6" onClick={() => handleViewVillage(village)}>View</button>
+          <button className="update-village rad-6" onClick={() => handleUpdateVillage(village)}>Update Village</button>
+          <button className="delete-village rad-6" onClick={() => handleDeleteVillage(village)}>Delete Village</button>
+          <button className="update-demographic-village rad-6" onClick={() => handleUpdateDemographic(village)}>Update Demographic Data</button>
+        </div>
+      </div>
+    ));
+  };
+
+  const handleViewVillage = (village) => {
+    setSelectedVillage(village);
+    setShowModal({ ...showModal, viewing: true });
+  };
+
+  const handleUpdateVillage = (village) => {
+    setSelectedVillage(village);
+    setShowModal({ ...showModal, updating: true });
+  };
+
+  const handleUpdateDemographic = (village) => {
+    setSelectedVillage(village);
+    setShowModal({ ...showModal, updatingDemographic: true });
+  };
+
+  return (
     <>
-    <section id="overlay"></section>
-    <section id="adding-village" class="rad-6 modal-village">
-      <div class="modal-header">
-        <h2>Add New Village</h2>
-        <button>x</button>
-      </div>
-      <form action="">
-        <div>
-          <label for="village-name">Village Name:</label>
-          <input type="text" name="Village Name" id="village-name" value="Tammun"/>
-        </div>
-        <div>
-          <label for="region">Region/District:</label>
-          <input type="text" name="Region" id="region" value="West Bank"/>
-        </div>
-        <div>
-          <label for="land-area">Land Area (sq km):</label>
-          <input type="text" name="Village Name" id="land-area" value="81"/>
-        </div>
-        <div>
-          <label for="latitude">Latitude:</label>
-          <input type="text" name="Latitude" id="latitude" value="32.3219"/>
-        </div>
-        <div>
-          <label for="longitude">Longitude:</label>
-          <input type="text" name="Longitude" id="longitude" value="35.3219"/>
-        </div>
-        <div>
-          <label for="village-image">Upload Image:</label>
-          <input type="file" name="Image" id="village-image"/>
-        </div>
-        <div>
-          <label for="categories">Categories/Tags:</label>
-          <input type="text" name="Categories" id="categories" placeholder="e.g., rural, urban" value="rural"/>
-        </div>
-        <input type="submit" value="Add Village"/>
-      </form>
-    </section>
-    <section id="viewing-village" class="rad-6 modal-village">
-      <div class="modal-header">
-        <h2>Village Details</h2>
-        <button>x</button>
-      </div>
-      <div class="village-data">
-        <div class="village-name">
-          <span class="info">Village Name:</span>
-          <span class="value">Jabalia</span>
-        </div>
-        <div class="region">
-          <span class="info">Region/District:</span>
-          <span class="value">Gaza Strip</span>
-        </div>
-        <div class="land-area">
-          <span class="info">Land Area (sq km):</span>
-          <span class="value">10</span>
-        </div>
-        <div class="latitude">
-          <span class="info">Latitude:</span>
-          <span class="value">31.9522</span>
-        </div>
-        <div class="longitude">
-          <span class="info">Longitude:</span>
-          <span class="value">35.2034</span>
-        </div>
-        <div class="tags">
-          <span class="info">Tags:</span>
-          <span class="value">undefined</span>
-        </div>
-        <div class="image">
-          <span class="info">Village Image</span>
-          <img class="value" src="" alt=""/>
-        </div>
-      </div>
-    </section>
-    <section id="updating-village" class="rad-6 modal-village">
-      <div class="modal-header">
-        <h2>Update Village</h2>
-        <button>x</button>
-      </div>
-      <form action="">
-        <div>
-          <label for="village-name">Village Name:</label>
-          <input type="text" name="Village Name" id="village-name" value="Azmut"/>
-        </div>
-        <div>
-          <label for="region">Region/District:</label>
-          <input type="text" name="Region" id="region" value="West Bank"/>
-        </div>
-        <div>
-          <label for="land-area">Land Area (sq km):</label>
-          <input type="text" name="Land Area" id="land-area" value="10"/>
-        </div>
-        <div>
-          <label for="latitude">Latitude:</label>
-          <input type="text" name="Latitude" id="latitude" value="32.2397"/>
-        </div>
-        <div>
-          <label for="longitude">Longitude:</label>
-          <input type="text" name="Longitude" id="longitude" value="35.2953"/>
-        </div>
-        <div>
-          <label for="village-image">Upload Image:</label>
-          <input type="file" name="Image" id="village-image"/>
-        </div>
-        <input type="submit" value="Update Village"/>
-      </form>
-    </section>
-    <section id="updating-demographic" class="rad-6 modal-village">
-      <div class="modal-header">
-        <h2>Add Demographic Data For</h2>
-        <button>x</button>
-      </div>
-      <form action="">
-        <div>
-          <label for="population-size">Population Size:</label>
-          <input type="text" name="Population Size" id="population-size" value="2887"/>
-        </div>
-        <div>
-          <label for="age-distribution">Age Distribution:</label>
-          <input type="text" name="Age Distribution" id="age-distribution" placeholder="e.g., 0-14: 30%, 15-64: 60%, 65+: 10%" value="40 30 18 8 4"/>
-        </div>
-        <div>
-          <label for="gender-ratios">Gender Ratios:</label>
-          <input type="text" name="Gender Ratios" id="gender-ratios" placeholder="e.g., Male: 51%, Female: 49%" value="51 49"/>
-        </div>
-        <div>
-          <label for="growth-rate">Population Growth Rate:</label>
-          <input type="text" name="Population Growth Rate" id="growth-rate" value="2.7"/>
-        </div>
-        <input type="submit" value="Add Demographic Data"/>
-      </form>
-    </section>
-    <div id="content">
-      <button id="add-village" class="rad-6">Add New Village</button>
-      <div id="page-content"  class="management rad-6">
-        <div id="view-village-list">
-          <h3>View Village List</h3>
-          <input class="rad-6" type="search" name="village-name" id="search-village" placeholder="Search villages..."/>
-          <div id="villages-config">
-            <div id="sort">
-              <label for="sort-by">Sort by:</label>
-              <select name="sort" class="rad-6" id="sort-by">
-                <option value="default">Default</option>
-                <option value="alphabetical">Alphabetical</option>
-              </select>
+      <section id="overlay" style={{ display: Object.values(showModal).some(v => v) ? 'block' : 'none' }}></section>
+      {showModal.adding && (
+        <section id="adding-village" className="rad-6 modal-village">
+          <div className="modal-header">
+            <h2>Add New Village</h2>
+            <button onClick={closeModals}>x</button>
+          </div>
+          <form onSubmit={handleAddVillage}>
+            <div>
+              <label htmlFor="villageName">Village Name:</label>
+              <input type="text" id="villageName" defaultValue="Tammun" />
             </div>
-            <div id="navigate-pages">
-              <p>Page:</p>
-              <button id="prev-page" class="rad-6">Prev</button>
-              <button id="next-page" class="rad-6">Next</button>
+            <div>
+              <label htmlFor="region">Region/District:</label>
+              <input type="text" id="region" defaultValue="West Bank" />
+            </div>
+            <div>
+              <label htmlFor="landArea">Land Area (sq km):</label>
+              <input type="text" id="landArea" defaultValue="81" />
+            </div>
+            <div>
+              <label htmlFor="latitude">Latitude:</label>
+              <input type="text" id="latitude" defaultValue="32.3219" />
+            </div>
+            <div>
+              <label htmlFor="longitude">Longitude:</label>
+              <input type="text" id="longitude" defaultValue="35.3219" />
+            </div>
+            <div>
+              <label htmlFor="villageImage">Upload Image:</label>
+              <input type="file" id="villageImage" />
+            </div>
+            <div>
+              <label htmlFor="categories">Categories/Tags:</label>
+              <input type="text" id="categories" placeholder="e.g., rural, urban" defaultValue="rural" />
+            </div>
+            <input type="submit" value="Add Village" />
+          </form>
+        </section>
+      )}
+      {showModal.viewing && selectedVillage && (
+        <section id="viewing-village" className="rad-6 modal-village">
+          <div className="modal-header">
+            <h2>Village Details</h2>
+            <button onClick={closeModals}>x</button>
+          </div>
+          <div className="village-data">
+            <div className="villageName">
+              <span className="info">Village Name:</span>
+              <span className="value">{selectedVillage.villageName}</span>
+            </div>
+            <div className="region">
+              <span className="info">Region/District:</span>
+              <span className="value">{selectedVillage.region}</span>
+            </div>
+            <div className="landArea">
+              <span className="info">Land Area (sq km):</span>
+              <span className="value">{selectedVillage.landArea}</span>
+            </div>
+            <div className="latitude">
+              <span className="info">Latitude:</span>
+              <span className="value">{selectedVillage.latitude}</span>
+            </div>
+            <div className="longitude">
+              <span className="info">Longitude:</span>
+              <span className="value">{selectedVillage.longitude}</span>
+            </div>
+            <div className="tags">
+              <span className="info">Tags:</span>
+              <span className="value">{selectedVillage.category}</span>
+            </div>
+            <div className="image">
+              <span className="info">Village Image</span>
+              <img className="value" src={selectedVillage.villageImage} alt="" />
             </div>
           </div>
-          <div id="villages-list">
-            <div class="rad-6" id="village-element">
-              <div class="name">Jabalia - Gaza Strip</div>
-              <div class="village-buttons">
-                <button class="view-village rad-6">View</button>
-                <button class="update-village rad-6">Update Village</button>
-                <button class="delete-village rad-6">Delete Village</button>
-                <button class="update-demographic-village rad-6">Update Demographic Data</button>
+        </section>
+      )}
+      {showModal.updating && selectedVillage && (
+        <section id="updating-village" className="rad-6 modal-village">
+          <div className="modal-header">
+            <h2>Update Village</h2>
+            <button onClick={closeModals}>x</button>
+          </div>
+          <form onSubmit={handleUpdateVillageSubmit}>
+            <div>
+              <label htmlFor="villageName">Village Name:</label>
+              <input type="text" id="villageName" defaultValue={selectedVillage.villageName} />
+            </div>
+            <div>
+              <label htmlFor="region">Region/District:</label>
+              <input type="text" id="region" defaultValue={selectedVillage.region} />
+            </div>
+            <div>
+              <label htmlFor="landArea">Land Area (sq km):</label>
+              <input type="text" id="landArea" defaultValue={selectedVillage.landArea} />
+            </div>
+            <div>
+              <label htmlFor="latitude">Latitude:</label>
+              <input type="text" id="latitude" defaultValue={selectedVillage.latitude} />
+            </div>
+            <div>
+              <label htmlFor="longitude">Longitude:</label>
+              <input type="text" id="longitude" defaultValue={selectedVillage.longitude} />
+            </div>
+            <div>
+              <label htmlFor="villageImage">Upload Image:</label>
+              <input type="file" id="villageImage" />
+            </div>
+            <input type="submit" value="Update Village" />
+          </form>
+        </section>
+      )}
+      {showModal.updatingDemographic && selectedVillage && (
+        <section id="updating-demographic" className="rad-6 modal-village">
+          <div className="modal-header">
+            <h2>Add Demographic Data For</h2>
+            <button onClick={closeModals}>x</button>
+          </div>
+          <form onSubmit={handleUpdateDemographicSubmit}>
+            <div>
+              <label htmlFor="population-size">Population Size:</label>
+              <input type="text" id="population-size" defaultValue={selectedVillage.population} />
+            </div>
+            <div>
+              <label htmlFor="age-distribution">Age Distribution:</label>
+              <input type="text" id="age-distribution" defaultValue={selectedVillage.ageDistribution.map(ad => ad.value).join(" ")} />
+            </div>
+            <div>
+              <label htmlFor="gender-ratios">Gender Ratios:</label>
+              <input type="text" id="gender-ratios" defaultValue={`${selectedVillage.genderRatios.male} ${selectedVillage.genderRatios.female}`} />
+            </div>
+            <div>
+              <label htmlFor="growth-rate">Population Growth Rate:</label>
+              <input type="text" id="growth-rate" defaultValue={selectedVillage.populationGrowthRate} />
+            </div>
+            <input type="submit" value="Add Demographic Data" />
+          </form>
+        </section>
+      )}
+      <div id="content">
+        <button id="add-village" className="rad-6" onClick={() => setShowModal({ ...showModal, adding: true })}>Add New Village</button>
+        <div id="page-content" className="management rad-6">
+          <div id="view-village-list">
+            <h3>View Village List</h3>
+            <input
+              className="rad-6"
+              type="search"
+              id="search-village"
+              placeholder="Search villages..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+            />
+            <div id="villages-config">
+              <div id="sort">
+                <label htmlFor="sort-by">Sort by:</label>
+                <select
+                  name="sort"
+                  className="rad-6"
+                  id="sort-by"
+                  onChange={(e) => {
+                    if (e.target.value === "alphabetical") {
+                      setVillages([...villages].sort((a, b) => a.villageName.localeCompare(b.villageName)));
+                    } else {
+                      setVillages([...originalOrder]);
+                    }
+                  }}
+                >
+                  <option value="default">Default</option>
+                  <option value="alphabetical">Alphabetical</option>
+                </select>
+              </div>
+              <div id="navigate-pages">
+                <p>Page:</p>
+                <button id="prev-page" className="rad-6" onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}>Prev</button>
+                <button id="next-page" className="rad-6" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
               </div>
             </div>
-            <div class="rad-6" id="village-element">
-              <div class="name">Jabalia - Gaza Strip</div>
-              <div class="village-buttons">
-                <button class="view-village rad-6">View</button>
-                <button class="update-village rad-6">Update Village</button>
-                <button class="delete-village rad-6">Delete Village</button>
-                <button class="update-demographic-village rad-6">Update Demographic Data</button>
-              </div>
+            <div id="villages-list">
+              {renderVillages(filteredVillages, currentPage)} {/* Render filtered villages */}
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
-  )
+  );
 }
